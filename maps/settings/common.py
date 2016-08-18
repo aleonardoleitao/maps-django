@@ -99,17 +99,13 @@ USE_TZ = False
 
 DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
 
-STATIC_ROOT = os.environ.get("STATIC_ROOT", "/mnt/projetos/")
+STATIC_URL = "/static/"
 
-STATIC_URL = os.environ.get("STATIC_URL", "/static/")
+STATIC_ROOT = "staticfiles"
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/mnt/projetos/static/',
-]
 
 # Media files (user-uploaded files)
 
-MEDIA_ROOT = os.environ.get("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
+MEDIA_URL = "/media/"
 
-MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
