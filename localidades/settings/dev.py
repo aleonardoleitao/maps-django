@@ -7,14 +7,14 @@ INSTALLED_APPS += (
 
 STATIC_ROOT = os.environ.get("STATIC_ROOT", "/mnt/projetos/")
 
-STATIC_URL = os.environ.get("STATIC_URL", "/static/")
+STATIC_URL = os.environ.get("STATIC_URL", "/staticfiles/")
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "staticfiles"),
     '/mnt/projetos/static/',
 ]
 
 MEDIA_ROOT = os.environ.get("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 
-MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
+MEDIA_URL = os.environ.get("MEDIA_URL", "/mediafiles/")
 
