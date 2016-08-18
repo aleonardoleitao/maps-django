@@ -7,11 +7,11 @@ install-dev: install
 
 
 run:
-	@python manage.py runserver --settings maps.settings.dev
+	@python manage.py runserver --settings localidades.settings.dev
 
 
 expose:
-	@python manage.py runserver --settings maps.settings.dev 0.0.0.0:8000
+	@python manage.py runserver --settings localidades.settings.dev 0.0.0.0:8000
 
 
 clean:
@@ -19,7 +19,7 @@ clean:
 
 
 test: clean
-	@python manage.py test --settings maps.settings.test
+	@python manage.py test --settings localidades.settings.test
 
 
 fetch-db-dump:

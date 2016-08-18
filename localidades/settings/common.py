@@ -31,7 +31,7 @@ INSTALLED_APPS = (
     "django_object_actions",
 
     # Local apps.
-    "maps.app",
+    "localidades.app",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,7 +45,7 @@ MIDDLEWARE_CLASSES = (
     "django.middleware.security.SecurityMiddleware",
 )
 
-ROOT_URLCONF = "maps.urls"
+ROOT_URLCONF = "localidades.urls"
 
 TEMPLATES = [
     {
@@ -63,7 +63,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "maps.wsgi.application"
+WSGI_APPLICATION = "localidades.wsgi.application"
 
 
 # Database
