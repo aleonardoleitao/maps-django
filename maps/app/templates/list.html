@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  
+button.css3button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  padding: 10px 20px;
+  background: -moz-linear-gradient(
+    top,
+    #42aaff 0%,
+    #003366);
+  background: -webkit-gradient(
+    linear, left top, left bottom,
+    from(#42aaff),
+    to(#003366));
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: 1px solid #003366;
+  -moz-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.5);
+  -webkit-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.5);
+  box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 1px rgba(255,255,255,0.5);
+  text-shadow:
+    0px -1px 0px rgba(000,000,000,0.7),
+    0px 1px 0px rgba(255,255,255,0.3);
+    cursor: pointer;
+}
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    /* height: 90%; */
+    height: 100%;
+    width: 75%; 
+    float: left; 
+  }
+  #controle {
+    /* height: 10%; */
+    height: 100%;
+    float: left;
+    width: 25%;
+    padding-top: 10px;
+  }  
+  #back {
+    float: left;
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+  }
+  #save {
+    /* float: left; */
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+  }
+  #next {
+    /* float: left; */
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+  }
+  .label {
+    display: block;
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    font-weight: bolder;
+  }
+  .text {
+    display: block;
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 15px;
+  }
+
+  .text span {
+      padding-right: 5px;
+  }
+
+/* =============== Estilos do autocomplete =============== */
+.ui-autocomplete { 
+  background: #fff; 
+  border-top: 1px solid #ccc;
+  cursor: pointer; 
+  font: 11px 'Open Sans',Arial;
+  margin-left: 0px;
+  width: 493px !important;
+  position: fixed;
+  padding-left: 0px;
+}
+
+.ui-autocomplete .ui-menu-item { 
+  list-style: none outside none;
+  padding: 5px 0 5px 5px;
+}
+
+.ui-autocomplete .ui-menu-item:hover { background: #eee }
+
+.ui-autocomplete .ui-corner-all { 
+  color: #666 !important;
+  display: block;
+}
+
+</style>
+
+<div id="map"></div>
+<div id="controle">
+  <div class="label">Market status:</div>
+  <div class="text market">Click and drag the marker</div>
+  
+  <div class="label">Current position:</div>
+  <div class="text position"><span id="latitude">{{atual.latitude}}</span><span id="longitude">{{atual.longitude}}</span></div>
+  
+  <div class="label">Closest matching address:</div>
+  <div class="text matching">0</div>
+  
+  <div class="label">ID:</div>
+  <div class="text id">{{atual.identificador}}</div>
+  
+  <div class="label">Location Type:</div>
+  <div class="text location">{{atual.location_type}}</div>
+  
+  <div class="label">Locaty:</div>
+  <div class="text locaty">{{atual.locality}}</div>
+
+  <div id="back">
+    <a href="/list/?ordem={{ordem}}&pagina={{anterior}}"><button type="button" name="bt-back" value="{{anterior}}" class="css3button">Anterior</button></a>
+  </div>
+  <div id="next">
+    <a href="/list/?ordem={{ordem}}&pagina={{proximo}}"><button type="button" name="bt-save" value="{{proximo}}" class="css3button">Próximo</button></a>
+  </div>
+  <div id="save">
+    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Corrigir coordenadas</button>
+  </div>
+
+  <div class="label">Search:</div>
+  <div class="text location"><input type="text" value="" id="search" name="search" size="60"></div>  
+
+<script>
+
+// The following example creates a marker in Stockholm, Sweden using a DROP
+// animation. Clicking on the marker will toggle the animation between a BOUNCE
+// animation and no animation.
+
+var marker;
+var geocoder;
+var map;
+
+function initMap() {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 14,
+    center: {lat: {{atual.latitude}}, lng: {{atual.longitude}}}
+  });
+
+  geocoder = new google.maps.Geocoder();
+
+  marker = new google.maps.Marker({
+    map: map,
+    draggable: true,
+    animation: google.maps.Animation.DROP,
+    position: {lat: {{atual.latitude}}, lng: {{atual.longitude}}}
+  });
+  
+  capturaEndereco();
+
+  marker.addListener('click', toggleBounce);
+  marker.addListener('drag', capturaEndereco);
+  
+}
+
+function capturaEndereco() {
+    geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) { 
+                $('.matching').html(results[0].formatted_address);
+                $('.position').val(marker.getPosition().lat());
+                //$('#txtLongitude').val(marker.getPosition().lng());
+                $('#longitude').html(marker.getPosition().lng());
+                $('#latitude').html(marker.getPosition().lat());
+            }
+        }
+    });
+};
+
+function toggleBounce() {
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
+  } else {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}
+
+function atualizaLocal(latitude, longitude) {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 14,
+    center: {lat: latitude, lng: longitude}
+  });
+
+  marker = new google.maps.Marker({
+    map: map,
+    draggable: true,
+    animation: google.maps.Animation.DROP,
+    position: {lat: latitude, lng: longitude}
+  });
+
+  marker.addListener('click', toggleBounce);
+  marker.addListener('drag', capturaEndereco);
+
+}
+
+function gravaPosicao(ord) {
+
+  pos = marker.getPosition();
+  lat = pos.lat();
+  lng = pos.lng();
+
+  var formData = {latitude:lat,longitude:lng,ordem:ord};
+  url = "/gravar";
+
+  $.ajax({
+    type: "POST",
+    url: url,
+    data: data,
+    success: success,
+    dataType: dataType
+  });
+}
+
+function atualizaPosicao(ant, prox, ord) {
+  
+  var formData = {anterior:ant,proximo:prox,ordem:ord};
+  url = "/atualizar";
+
+  $.ajax({
+    type: "POST",
+    url: url,
+    data: formData,
+    success: success,
+    dataType: dataType
+  });
+}
+
+$(document).ready(function () {
+  $("#search").autocomplete({
+      source: function (request, response) {
+          geocoder.geocode({ 'address': request.term + ', Brasil', 'region': 'BR' }, function (results, status) {
+              response($.map(results, function (item) {
+                  return {
+                      label: item.formatted_address,
+                      value: item.formatted_address,
+                      latitude: item.geometry.location.lat(),
+                      longitude: item.geometry.location.lng()
+                  }
+              }));
+          })
+      },
+      select: function (event, ui) {
+          $('#longitude').html(ui.item.longitude);
+          $('#latitude').html(ui.item.latitude);
+          atualizaLocal(ui.item.latitude, ui.item.longitude);
+      }
+  });
+});
+
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDi-TdTQyhW20jCmiDYw6P4LPIsN8-gTBQ&callback=initMap"></script>
+
+
+{% endblock content %}

@@ -1,0 +1,5 @@
+django-debug-toolbar==1.4
+django-inmemorystorage==0.1.1
+mock==1.3.0
+model-mommy==1.2.6
+ipdb==0.9.0
