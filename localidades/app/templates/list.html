@@ -117,8 +117,25 @@ button.css3button {
   display: block;
 }
 
-</style>
+#floating-panel {
+  position: absolute;
+  top: 10px;
+  left: 25%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+  padding-left: 10px;
+}
 
+</style>
+<div id="floating-panel">
+      <input id="address" type="textbox" value="" size="50">
+      <input id="submit" type="button" value="Procurar...">
+</div>
 <div id="map"></div>
 <div id="controle">
   <div class="label">Market status:</div>
@@ -181,7 +198,17 @@ function initMap() {
 
   marker.addListener('click', toggleBounce);
   marker.addListener('drag', capturaEndereco);
-  
+
+  document.getElementById('submit').addEventListener('click', function() {
+    geocodeAddress(geocoder, map);
+  });  
+  document.getElementById('address').addEventListener('keypress', function(e) {
+    var key = e.which || e.keyCode;
+    if (key === 13) {
+      geocodeAddress(geocoder, map);
+    }  
+  });
+
 }
 
 function capturaEndereco() {
@@ -253,6 +280,21 @@ function atualizaPosicao(ant, prox, ord) {
     data: formData,
     success: success,
     dataType: dataType
+  });
+}
+
+function geocodeAddress(geocoder, resultsMap) {
+  var address = document.getElementById('address').value;
+  geocoder.geocode({'address': address}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      resultsMap.setCenter(results[0].geometry.location);
+      marker = new google.maps.Marker({
+        map: resultsMap,
+        position: results[0].geometry.location
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
   });
 }
 

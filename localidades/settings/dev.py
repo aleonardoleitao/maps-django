@@ -2,17 +2,13 @@ from .common import *
 
 
 INSTALLED_APPS += (
-    "debug_toolbar",
+#    "debug_toolbar",
 )
 
 STATIC_ROOT = os.environ.get("STATIC_ROOT", "/mnt/projetos/")
 
 STATIC_URL = os.environ.get("STATIC_URL", "/staticfiles/")
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
-    '/mnt/projetos/static/',
-]
 
 MEDIA_ROOT = os.environ.get("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 
