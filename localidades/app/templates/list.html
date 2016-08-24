@@ -61,12 +61,19 @@ button.css3button {
     padding-bottom: 5px;
   }
   #save {
-    /* float: left; */
+    float: left;
     padding-top: 5px;
     padding-left: 15px;
     padding-right: 5px;
     padding-bottom: 5px;
   }
+  #nao-localizado {
+    /* float: left; */
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+  }  
   #next {
     /* float: left; */
     padding-top: 5px;
@@ -138,23 +145,22 @@ button.css3button {
 </div>
 <div id="map"></div>
 <div id="controle">
-  <div class="label">Market status:</div>
-  <div class="text market">Click and drag the marker</div>
   
   <div class="label">Current position:</div>
   <div class="text position"><span id="latitude">{{atual.latitude}}</span><span id="longitude">{{atual.longitude}}</span></div>
-  
-  <div class="label">Closest matching address:</div>
-  <div class="text matching">0</div>
-  
+
   <div class="label">ID:</div>
   <div class="text id">{{atual.identificador}}</div>
-  
+
   <div class="label">Location Type:</div>
   <div class="text location">{{atual.location_type}}</div>
   
   <div class="label">Locaty:</div>
   <div class="text locaty">{{atual.locality}}</div>
+    
+  <div class="label">Closest matching address:</div>
+  <div class="text matching">0</div>
+    
 
   <div id="back">
     <a href="/list/?ordem={{ordem}}&pagina={{anterior}}"><button type="button" name="bt-back" value="{{anterior}}" class="css3button">Anterior</button></a>
@@ -163,11 +169,16 @@ button.css3button {
     <a href="/list/?ordem={{ordem}}&pagina={{proximo}}"><button type="button" name="bt-save" value="{{proximo}}" class="css3button">Próximo</button></a>
   </div>
   <div id="save">
-    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Corrigir coordenadas</button>
+    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Corrigir</button>
+  </div>
+  <div id="nao-localizado">
+    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Não Localizado</button>
   </div>
 
+  <!--
   <div class="label">Search:</div>
   <div class="text location"><input type="text" value="" id="search" name="search" size="60"></div>  
+  -->
 
 <script>
 

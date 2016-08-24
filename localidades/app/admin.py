@@ -6,6 +6,13 @@ from django.http import HttpResponseRedirect
 
 from .models import Ordem, Maps
 
+class ReadonlyFieldsMixin(object):
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return super(ReadonlyFieldsMixin, self).get_readonly_fields(request, obj)
+        else:
+            return tuple()
+
 def importar_localidade(self, request, queryset):
 	
 	ordens = Ordem.objects.filter(pk__in=queryset)
@@ -41,8 +48,10 @@ def editar_localidade(modeladmin, request, queryset):
 importar_localidade.short_description = "Importar localidades"
 editar_localidade.short_description = "Editar localidades"
 
-class MapsInline(admin.TabularInline):
+class MapsInline(ReadonlyFieldsMixin, admin.TabularInline):
     model = Maps
+    readonly_fields = ('status','data_edicao','user_edicao','data_finalizacao','user_finalizacao')
+    #exclude = ('data_edicao','user_edicao','data_finalizacao','user_finalizacao')
 
 class OrdemAdmin(admin.ModelAdmin):
     list_display = ("titulo","data_criacao")

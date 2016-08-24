@@ -13,6 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Application definition.
 
@@ -43,6 +44,8 @@ MIDDLEWARE_CLASSES = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    'localidades.app.get_username.RequestMiddleware',
+    'localidades.app.middleware.AutoLogout'
 )
 
 ROOT_URLCONF = "localidades.urls"
@@ -79,6 +82,8 @@ DATABASES = {
     }
 }
 
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 30 #equivalent to 5 minutes
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
