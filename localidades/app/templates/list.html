@@ -146,11 +146,13 @@ button.css3button {
 <div id="map"></div>
 <div id="controle">
   
+  <input id="id" type="hidden" value="{{atual.id}}">
+
   <div class="label">Current position:</div>
   <div class="text position"><span id="latitude">{{atual.latitude}}</span><span id="longitude">{{atual.longitude}}</span></div>
 
   <div class="label">ID:</div>
-  <div class="text id">{{atual.identificador}}</div>
+  <div class="text identificador">{{atual.identificador}}</div>
 
   <div class="label">Location Type:</div>
   <div class="text location">{{atual.location_type}}</div>
@@ -169,14 +171,16 @@ button.css3button {
     <a href="/list/?ordem={{ordem}}&pagina={{proximo}}"><button type="button" name="bt-save" value="{{proximo}}" class="css3button">Próximo</button></a>
   </div>
   <div id="save">
-    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Corrigir</button>
+    <button type="button" name="bt-next" id="bt-corrigir" class="css3button">Corrigir</button>
   </div>
   <div id="nao-localizado">
-    <button type="button" name="bt-next" value="{{atual.identificador}}" class="css3button">Não Localizado</button>
+    <button type="button" name="bt-next" id="bt-naolocalizado" class="css3button">Não Localizado</button>
   </div>
 
+  <div class="label resultado"></div>
+
   <!--
-  <div class="label">Search:</div>
+  <div class="label resultado"></div>
   <div class="text location"><input type="text" value="" id="search" name="search" size="60"></div>  
   -->
 
@@ -262,21 +266,23 @@ function atualizaLocal(latitude, longitude) {
 
 }
 
-function gravaPosicao(ord) {
-
+function gravaPosicao(tp) {
+  ids = $("#id").val();
+  identificador = $(".identificador").text();
   pos = marker.getPosition();
   lat = pos.lat();
   lng = pos.lng();
 
-  var formData = {latitude:lat,longitude:lng,ordem:ord};
-  url = "/gravar";
+  var formData = {id:ids,identificador:identificador,latitude:lat,longitude:lng,tipo:tp};
 
+  url = "/gravar/";    
   $.ajax({
     type: "POST",
     url: url,
-    data: data,
-    success: success,
-    dataType: dataType
+    data: formData,
+    success: function(data) {
+        $('.resultado').html(data); 
+    }
   });
 }
 
@@ -289,8 +295,9 @@ function atualizaPosicao(ant, prox, ord) {
     type: "POST",
     url: url,
     data: formData,
-    success: success,
-    dataType: dataType
+    success: function(data) {
+        $('.center').html(data); 
+    }
   });
 }
 
@@ -329,6 +336,12 @@ $(document).ready(function () {
           atualizaLocal(ui.item.latitude, ui.item.longitude);
       }
   });
+  document.getElementById('bt-corrigir').addEventListener('click', function() {
+    gravaPosicao('F');
+  });  
+  document.getElementById('bt-naolocalizado').addEventListener('click', function() {
+    gravaPosicao('X');
+  });  
 });
 
 </script>

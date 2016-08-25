@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from datetime import datetime
 from get_username import get_username
+from datetime import datetime
 
 class Ordem(models.Model):
 
@@ -59,9 +60,28 @@ class Maps(models.Model):
     def __unicode__(self):
         return self.identificador
 
-    def atualiza(self, tipo):
-        req = get_username()
-        #if tipo = 'A':
-        #else
+    def atualiza(self, tipo, usuario):
 
+        if tipo == Maps.ANDAMENTO:
+            self.status = Maps.ANDAMENTO
+            self.data_edicao = datetime.now()
+            self.user_edicao = usuario
+            self.save()
 
+        elif tipo == Maps.ATUALIZADO:
+            self.status = Maps.ATUALIZADO
+            self.data_finalizacao = datetime.now()
+            self.user_finalizacao = usuario
+            self.save()
+
+        elif tipo == Maps.NAO_LOCALIZADO:
+            self.status = Maps.NAO_LOCALIZADO
+            self.data_finalizacao = datetime.now()
+            self.user_finalizacao = usuario
+            self.latitude = 0
+            self.longitude = 0
+            self.save()
+
+        else:
+            self.status = Maps.NOVO
+            self.save()

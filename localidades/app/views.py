@@ -4,7 +4,7 @@
 import traceback
 import sys
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed, HttpResponseForbidden
-#import simplejson
+import simplejson
 import commands
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection, transaction
@@ -15,6 +15,8 @@ import csv
 import codecs
 from models import Ordem, Maps
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 
 def index(request):
         return render(request,'index.html')
@@ -51,6 +53,10 @@ def upload(request):
     return render(request, "upload.html", locals())
 
 def list(request):
+
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/admin/login/?next=/admin/app/ordem/')
+
 	r = request.GET
 	rg = request.GET.get
 
@@ -90,6 +96,13 @@ def list(request):
 		if pg_atual.has_next():
 			proximo = 2
 
+	usuario = ""
+	if request.user != None:
+		usuario = request.user.username
+
+	if atual != '' and atual != None:
+		atual.atualiza(Maps.ANDAMENTO, usuario)
+
 	data = {
 		'anterior': anterior,
 		'proximo': proximo,
@@ -100,13 +113,31 @@ def list(request):
 	#return render(request,'list.html')
 	return render_to_response('list.html', data)
 
+@csrf_exempt
 def gravar(request):
-	identificador = request.GET["identificador"]
 
-	jsonData = {}
-	jsonData['resultado'] = "Salvo"
+	ID = request.POST["id"]
+	identificador = request.POST["identificador"]
+	latitude = request.POST["latitude"]
+	longitude = request.POST["longitude"]
+	tipo = request.POST["tipo"]
+	mensagem = ""
 
-	return HttpResponse(simplejson.dumps(jsonData))
+	usuario = ""
+	if request.user != None:
+		usuario = request.user.username
+
+	try:
+		maps = Maps.objects.get(id=ID)
+		maps.latitude = latitude
+		maps.longitude = longitude
+		maps.atualiza(tipo, usuario)
+		mensagem = "Corrigida a localização"
+
+	except Exception, exception:
+		mensagem = "Erro ao atualizar o registro"
+
+	return HttpResponse(mensagem)
 
 def atualizar(request):
 	ident = request.GET["identificador"]

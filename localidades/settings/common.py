@@ -15,6 +15,8 @@ ALLOWED_HOSTS = ["*"]
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+#APPEND_SLASH=False
+
 # Application definition.
 
 INSTALLED_APPS = (
