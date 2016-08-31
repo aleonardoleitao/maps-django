@@ -3,11 +3,14 @@ from .common import *
 import dj_database_url
 
 
-DEBUG = False
+DEBUG = True
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/mnt/projetos/static/")
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/mnt/projetos/media")
 
 DATABASES = {
     "default": {

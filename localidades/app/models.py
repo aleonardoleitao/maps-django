@@ -14,6 +14,31 @@ class Ordem(models.Model):
     data_criacao = models.DateTimeField(auto_now_add=True, blank=True)
     file = models.FileField(upload_to=settings.MEDIA_ROOT, blank = True)
 
+    SHOW = 'S'
+    SHOW_EDITABLE = 'E'
+    HIDE = 'H'
+
+    SHOW_X_EDITABLE = (
+        (SHOW, 'Show'),
+        (SHOW_EDITABLE, 'Show Editable'),
+    )
+    SHOW_X_HIDE = (
+        (SHOW, 'Show'),
+        (HIDE, 'Hide'),
+    )
+
+    exibe_identificador = models.CharField(
+        max_length=1,
+        choices=SHOW_X_HIDE,
+        default=SHOW,
+    )
+
+    exibe_address = models.CharField(
+        max_length=1,
+        choices=SHOW_X_EDITABLE,
+        default=SHOW,
+    )
+
     class Meta:
         ordering = ("data_criacao",)
         verbose_name = "localidade"
@@ -29,6 +54,7 @@ class Maps(models.Model):
     longitude = models.CharField(max_length=40)
     location_type = models.CharField(max_length=40)
     locality = models.CharField(max_length=40)
+    address = models.CharField(max_length=40, null=True, blank=True)
 
     ordem = models.ForeignKey(Ordem, related_name="items")
 
