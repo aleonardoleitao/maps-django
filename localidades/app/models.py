@@ -54,7 +54,7 @@ class Maps(models.Model):
     longitude = models.CharField(max_length=40)
     location_type = models.CharField(max_length=40)
     locality = models.CharField(max_length=40)
-    address = models.CharField(max_length=40, null=True, blank=True)
+    address = models.CharField(max_length=1024, null=True, blank=True)
 
     ordem = models.ForeignKey(Ordem, related_name="items")
 

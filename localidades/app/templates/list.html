@@ -151,17 +151,23 @@ button.css3button {
   <div class="label">Current position:</div>
   <div class="text position"><span id="latitude">{{atual.latitude}}</span><span id="longitude">{{atual.longitude}}</span></div>
 
-  <div class="label">ID:</div>
-  <div class="text identificador">{{atual.identificador}}</div>
-
+  <div class="label" {% if atual.ordem.exibe_identificador == "H" %}style="display:none;"{% endif %}>ID:</div>
+  <div class="text identificador" {% if atual.ordem.exibe_identificador == "H" %}style="display:none;"{% endif %}>{{atual.identificador}}</div>
+  
   <div class="label">Location Type:</div>
   <div class="text location">{{atual.location_type}}</div>
   
   <div class="label">Locaty:</div>
   <div class="text locaty">{{atual.locality}}</div>
-    
+  
+  {% if atual.ordem.exibe_address == "E" %}
+  <div class="label">Closest matching address:</div>
+  <div class="text matching"><input value="{{atual.address}}" type="text" size="50" id="address"></div>
+  {% else %}
   <div class="label">Closest matching address:</div>
   <div class="text matching">0</div>
+  <input value="{{atual.address}}" type="hidden" id="address">
+  {% endif %}  
     
 
   <div id="back">
@@ -230,7 +236,11 @@ function capturaEndereco() {
     geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
                 if (results[0]) { 
-                $('.matching').html(results[0].formatted_address);
+                  if ( $(".matching input").length ){
+                    $('.matching input').val(results[0].formatted_address);
+                  } else {
+                    $('.matching').val(results[0].formatted_address);
+                  }
                 $('.position').val(marker.getPosition().lat());
                 //$('#txtLongitude').val(marker.getPosition().lng());
                 $('#longitude').html(marker.getPosition().lng());
@@ -273,7 +283,14 @@ function gravaPosicao(tp) {
   lat = pos.lat();
   lng = pos.lng();
 
-  var formData = {id:ids,identificador:identificador,latitude:lat,longitude:lng,tipo:tp};
+  adr = "";
+  if ( $(".matching input").length ){
+    adr = $(".matching input").val();
+  } else if ( $("#address").length ){
+    adr = $("#address").val();
+  }
+
+  var formData = {id:ids,identificador:identificador,latitude:lat,longitude:lng,tipo:tp,address:adr};
 
   url = "/gravar/";    
   $.ajax({

@@ -77,7 +77,13 @@ def list(request):
 	#import ipdb
 	#ipdb.set_trace()
 
-	lista = Maps.objects.filter(ordem=ident).order_by('pk')
+	usuario = ""
+	if request.user != None:
+		if request.user.is_superuser:
+			lista = Maps.objects.filter(ordem=ident).order_by('pk')
+		else:
+			lista = Maps.objects.filter(ordem=ident,user_edicao__isnull=True).order_by('pk')
+
 	paginator = Paginator(lista, 1)
 	proximo = ''
 	atual = ''
@@ -121,16 +127,18 @@ def gravar(request):
 	latitude = request.POST["latitude"]
 	longitude = request.POST["longitude"]
 	tipo = request.POST["tipo"]
+	address = request.POST["address"]
 	mensagem = ""
 
 	usuario = ""
 	if request.user != None:
 		usuario = request.user.username
 
-	try:
+	try:		
 		maps = Maps.objects.get(id=ID)
 		maps.latitude = latitude
 		maps.longitude = longitude
+		maps.address = address
 		maps.atualiza(tipo, usuario)
 		mensagem = "Corrigida a localização"
 
